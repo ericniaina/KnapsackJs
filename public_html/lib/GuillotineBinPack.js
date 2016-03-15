@@ -9,7 +9,6 @@
     "use strict";
     var libs = require("./Rect.js");
     var Rect = libs.Rect;
-
     function GuillotineBinPack(width, height) {
         this.width = width;
         this.height = height;
@@ -20,7 +19,6 @@
         this.freeRectangles.push(n);
     }
     exports.GuillotineBinPack = GuillotineBinPack;
-
     GuillotineBinPack.prototype = {
         FreeRectChoiceHeuristic: {
             'RectBestAreaFit': function (width, height, freeRect) {
@@ -88,7 +86,6 @@
                 // If we didn't manage to find any rectangle to pack, abort.
                 if (bestScore === Number.MAX_SAFE_INTEGER)
                     return;
-
                 // Otherwise, we're good to go and do the actual packing.
                 var newNode = new Rect(this.freeRectangles[bestFreeRect].x, this.freeRectangles[bestFreeRect].y, rects[bestRect].width, rects[bestRect].height);
                 if (bestFlipped) {
@@ -99,14 +96,11 @@
                 // Remove the free space we lost in the bin.
                 SplitFreeRectByHeuristic(this.freeRectangles[bestFreeRect], newNode, splitMethod);
                 this.freeRectangles.splice(bestFreeRect, 1);
-
                 // Remove the rectangle we just packed from the input list.
                 rects.splice(bestRect, 1);
-
                 // Perform a Rectangle Merge step if desired.
                 if (merge)
                     MergeFreeList();
-
                 // Remember the new used rectangle.
                 this.usedRectanglesusedRectangles.push(newNode);
             }
@@ -163,12 +157,10 @@
             bottom.x = freeRect.x;
             bottom.y = freeRect.y + placedRect.height;
             bottom.height = freeRect.height - placedRect.height;
-
             var right = new Rect(0, 0, 0, 0);
             right.x = freeRect.x + placedRect.width;
             right.y = freeRect.y;
             right.width = freeRect.width - placedRect.width;
-
             if (splitHorizontal)
             {
                 bottom.width = freeRect.width;
@@ -189,42 +181,50 @@
         MergeFreeList: function () {
             // Do a Theta(n^2) loop to see if any pair of free rectangles could me merged into one.
             // Note that we miss any opportunities to merge three rectangles into one. (should call this function again to detect that)
-            for (var i = 0; i < this.freeRectangles.size(); ++i)
-                    for (var j = i + 1; j < this.freeRectangles.size();                    ++j                    )
-            {
-                if (this.freeRectangles[i].width == this.freeRectangles[j].width && this.freeRectangles[i].x == this.freeRectangles[j].x)
+            for (var i = 0; i < this.freeRectangles.size(); ++i) {
+                for (var j = i + 1; j < this.freeRectangles.size(); ++j)
                 {
-                    if (this.freeRectangles[i].y == this.freeRectangles[j].y + this.freeRectangles[j].height)
+                    if (this.freeRectangles[i].width == this.freeRectangles[j].width && this.freeRectangles[i].x == this.freeRectangles[j].x)
                     {
-                        this.freeRectangles[i].y -= this.freeRectangles[j].height;
-                        this.freeRectangles[i].height += this.freeRectangles[j].height;
-                        this.freeRectangles.erase(this.freeRectangles.begin() + j);
-                        --j;
+                        if (this.freeRectangles[i].y == this.freeRectangles[j].y + this.freeRectangles[j].height)
+                        {
+                            this.freeRectangles[i].y -= this.freeRectangles[j].height;
+                            this.freeRectangles[i].height += this.freeRectangles[j].height;
+                            this.freeRectangles.erase(this.freeRectangles.begin() + j);
+                            --j;
+                        }
+                        else if (this.freeRectangles[i].y + this.freeRectangles[i].height == this.freeRectangles[j].y)
+                        {
+                            this.freeRectangles[i].height += this.freeRectangles[j].height;
+                            this.freeRectangles.erase(this.freeRectangles.begin() + j);
+                            --j;
+                        }
                     }
-                    else if (this.freeRectangles[i].y + this.freeRectangles[i].height == this.freeRectangles[j].y)
+                    else if (this.freeRectangles[i].height == this.freeRectangles[j].height && this.freeRectangles[i].y == this.freeRectangles[j].y)
                     {
-                        this.freeRectangles[i].height += this.freeRectangles[j].height;
-                        this.freeRectangles.erase(this.freeRectangles.begin() + j);
-                        --j;
-                    }
-                }
-                else if (this.freeRectangles[i].height == this.freeRectangles[j].height && this.freeRectangles[i].y == this.freeRectangles[j].y)
-                {
-                    if (this.freeRectangles[i].x == this.freeRectangles[j].x + this.freeRectangles[j].width)
-                    {
-                        this.freeRectangles[i].x -= this.freeRectangles[j].width;
-                        this.freeRectangles[i].width += this.freeRectangles[j].width;
-                        this.freeRectangles.erase(this.freeRectangles.begin() + j);
-                        --j;
-                    }
-                    else if (this.freeRectangles[i].x + this.freeRectangles[i].width == this.freeRectangles[j].x)
-                    {
-                        this.freeRectangles[i].width += this.freeRectangles[j].width;
-                        this.freeRectangles.erase(this.freeRectangles.begin() + j);
-                        --j;
+                        if (this.freeRectangles[i].x == this.freeRectangles[j].x + this.freeRectangles[j].width)
+                        {
+                            this.freeRectangles[i].x -= this.freeRectangles[j].width;
+                            this.freeRectangles[i].width += this.freeRectangles[j].width;
+                            this.freeRectangles.erase(this.freeRectangles.begin() + j);
+                            --j;
+                        }
+                        else if (this.freeRectangles[i].x + this.freeRectangles[i].width == this.freeRectangles[j].x)
+                        {
+                            this.freeRectangles[i].width += this.freeRectangles[j].width;
+                            this.freeRectangles.erase(this.freeRectangles.begin() + j);
+                            --j;
+                        }
                     }
                 }
             }
+        },
+        Insert: function (width, height, merge, rectChoice, splitMethod) {
+            var freeNodeIndex = 0;
+            var newRect = FindPositionForNewNode(width, height, rectChoice, freeNodeIndex);
+        },
+        FindPositionForNewNode: function (width, height, rectChoice, nodeIndex) {
+            
         }
     };
 })(this);
