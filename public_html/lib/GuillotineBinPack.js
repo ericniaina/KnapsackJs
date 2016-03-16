@@ -47,7 +47,7 @@
             }
         },
         ScoreByHeuristic: function (width, height, freeRect, rectChoice) {
-            return FreeRectChoiceHeuristic[rectChoice](width, height, freeRect);
+            return this.FreeRectChoiceHeuristic[rectChoice](width, height, freeRect);
         },
         Inserts: function (rects, merge, rectChoice, splitMethod) {
             var bestFreeRect = 0;
@@ -55,8 +55,8 @@
             var bestFlipped = false;
             while (rects.length > 0) {
                 var bestScore = Number.MAX_SAFE_INTEGER;
-                for (i = 0; i < this.freeRectangles.length; ++i) {
-                    for (j = 0; j < rects.length; ++i) {
+                for (var i = 0; i < this.freeRectangles.length; ++i) {
+                    for (var j = 0; j < rects.length; ++i) {
                         // If this rectangle is a perfect match, we pick it instantly.
                         if (rects[j].width === this.freeRectangles[i].width && rects[j].height === this.freeRectangles[i].height)
                         {
@@ -80,7 +80,7 @@
                         // Try if we can fit the rectangle upright.
                         else if (rects[j].width <= this.freeRectangles[i].width && rects[j].height <= this.freeRectangles[i].height)
                         {
-                            var score = ScoreByHeuristic(rects[j].width, rects[j].height, this.freeRectangles[i], rectChoice);
+                            var score = this.ScoreByHeuristic(rects[j].width, rects[j].height, this.freeRectangles[i], rectChoice);
                             if (score < bestScore)
                             {
                                 bestFreeRect = i;
@@ -92,7 +92,7 @@
                         // If not, then perhaps flipping sideways will make it fit?
                         else if (rects[j].height <= this.freeRectangles[i].width && rects[j].width <= this.freeRectangles[i].height)
                         {
-                            var score = ScoreByHeuristic(rects[j].height, rects[j].width, this.freeRectangles[i], rectChoice);
+                            var score = this.ScoreByHeuristic(rects[j].height, rects[j].width, this.freeRectangles[i], rectChoice);
                             if (score < bestScore)
                             {
                                 bestFreeRect = i;
@@ -294,12 +294,12 @@
                 // Does the rectangle fit upright?
                 else if (width <= this.freeRectangles[i].width && height <= this.freeRectangles[i].height)
                 {
-                    var score = ScoreByHeuristic(width, height, this.freeRectangles[i], rectChoice);
+                    var score = this.ScoreByHeuristic(width, height, this.freeRectangles[i], rectChoice);
 
                     if (score < bestScore)
                     {
-                        bestNode.x = freeRectangles[i].x;
-                        bestNode.y = freeRectangles[i].y;
+                        bestNode.x = this.freeRectangles[i].x;
+                        bestNode.y = this.freeRectangles[i].y;
                         bestNode.width = width;
                         bestNode.height = height;
                         bestScore = score;
@@ -309,7 +309,7 @@
                 // Does the rectangle fit sideways?
                 else if (height <= this.freeRectangles[i].width && width <= this.freeRectangles[i].height)
                 {
-                    var score = ScoreByHeuristic(height, width, this.freeRectangles[i], rectChoice);
+                    var score = this.ScoreByHeuristic(height, width, this.freeRectangles[i], rectChoice);
 
                     if (score < bestScore)
                     {
