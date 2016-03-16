@@ -170,7 +170,7 @@
             }
 
             // Perform the actual split.
-            SplitFreeRectAlongAxis(freeRect, placedRect, splitHorizontal);
+            this.SplitFreeRectAlongAxis(freeRect, placedRect, splitHorizontal);
         },
         SplitFreeRectAlongAxis: function (freeRect, placedRect, splitHorizontal) {
             // Form the two new rectangles.
@@ -242,7 +242,7 @@
         },
         Insert: function (width, height, merge, rectChoice, splitMethod) {
             var freeNodeIndex = 0;
-            var position = FindPositionForNewNode(width, height, rectChoice, freeNodeIndex);
+            var position = this.FindPositionForNewNode(width, height, rectChoice, freeNodeIndex);
             var newRect = position.bestNode;
             freeNodeIndex = position.nodeIndex;
 
@@ -251,8 +251,8 @@
                 return newRect;
 
             // Remove the space that was just consumed by the new rectangle.
-            SplitFreeRectByHeuristic(this.freeRectangles[freeNodeIndex], newRect, splitMethod);
-            this.freeRectangles.erase(freeRectangles.begin() + freeNodeIndex);
+            this.SplitFreeRectByHeuristic(this.freeRectangles[freeNodeIndex], newRect, splitMethod);
+            this.freeRectangles.splice(freeNodeIndex, 1);
 
             // Perform a Rectangle Merge step if desired.
             if (merge)

@@ -8,7 +8,7 @@ var expect = require('chai').expect;
 var GuillotineBinPack = require("../lib/GuillotineBinPack.js").GuillotineBinPack;
 
 describe('GuillotineBinPack', function () {
-    describe("constructor", function () {
+    describe("Insert", function () {
         /**
          * Correct format
          * {
@@ -16,12 +16,12 @@ describe('GuillotineBinPack', function () {
          * }
          * @returns {undefined}
          */
-        it('should contains the bin property', function () {
-            try {
-                var GuillotineBinPack = new GuillotineBinPack(null);
-            } catch (err) {
-                expect(err).to.eql(new Error('Property does not exist in model schema.'));                
-            }
+        it('should perfectly fit', function () {
+            var bin = new GuillotineBinPack(200, 300);
+            var insertedRect = bin.Insert(200, 300, false, 'RectBestAreaFit', 'SplitShorterLeftoverAxis');
+            assert.equal(200, insertedRect.width);
+            assert.equal(300, insertedRect.height);
+            assert.equal(1, bin.Occupancy());
         });
     });
 });
