@@ -24,6 +24,27 @@
             'RectBestAreaFit': function (width, height, freeRect) {
                 return freeRect.width * freeRect.height - width * height;
             },
+            'RectBestShortSideFit': function (width, height, freeRect) {
+                var leftoverHoriz = Math.abs(freeRect.width - width);
+                var leftoverVert = Math.abs(freeRect.height - height);
+                var leftover = Math.min(leftoverHoriz, leftoverVert);
+                return leftover;
+            },
+            'RectBestLongSideFit': function (width, height, freeRect) {
+                var leftoverHoriz = Math.abs(freeRect.width - width);
+                var leftoverVert = Math.abs(freeRect.height - height);
+                var leftover = Math.max(leftoverHoriz, leftoverVert);
+                return leftover;
+            },
+            'RectWorstAreaFit': function (width, height, freeRect) {
+                return -ScoreByHeuristic(width, height, freeRect, 'RectBestAreaFit');
+            },
+            'RectWorstShortSideFit': function (width, height, freeRect) {
+                return -ScoreByHeuristic(width, height, freeRect, 'RectBestShortSideFit');
+            },
+            'RectWorstLongSideFit': function (width, height, freeRect) {
+                return -ScoreByHeuristic(width, height, freeRect, 'RectBestLongSideFit');
+            }
         },
         ScoreByHeuristic: function (width, height, freeRect, rectChoice) {
             return FreeRectChoiceHeuristic[rectChoice](width, height, freeRect);
@@ -221,10 +242,97 @@
         },
         Insert: function (width, height, merge, rectChoice, splitMethod) {
             var freeNodeIndex = 0;
-            var newRect = FindPositionForNewNode(width, height, rectChoice, freeNodeIndex);
+            var position = FindPositionForNewNode(width, height, rectChoice, freeNodeIndex);
+            var newRect = position.bestNode;
+            freeNodeIndex = position.nodeIndex;
+
+            // Abort if we didn't have enough space in the bin.
+            if (newRect.height == 0)
+                return newRect;
+
+            // Remove the space that was just consumed by the new rectangle.
+            SplitFreeRectByHeuristic(this.freeRectangles[freeNodeIndex], newRect, splitMethod);
+            this.freeRectangles.erase(freeRectangles.begin() + freeNodeIndex);
+
+            // Perform a Rectangle Merge step if desired.
+            if (merge)
+                MergeFreeList();
+
+            // Remember the new used rectangle.
+            this.usedRectangles.push(newRect);
+
+            return newRect;
         },
         FindPositionForNewNode: function (width, height, rectChoice, nodeIndex) {
-            
+            var bestNode = new Rect(0, 0, 0, 0);
+            var bestScore = Number.MAX_SAFE_INTEGER;
+            /// Try each free rectangle to find the best one for placement.
+            for (var i = 0; i < this.freeRectangles.length; ++i)
+            {
+                // If this is a perfect fit upright, choose it immediately.
+                if (width == this.freeRectangles[i].width && height == this.freeRectangles[i].height)
+                {
+                    bestNode.x = this.freeRectangles[i].x;
+                    bestNode.y = this.freeRectangles[i].y;
+                    bestNode.width = width;
+                    bestNode.height = height;
+                    bestScore = Number.MIN_SAFE_INTEGER;
+                    nodeIndex = i;
+                    break;
+                }
+                // If this is a perfect fit sideways, choose it.
+                else if (height == this.freeRectangles[i].width && width == this.freeRectangles[i].height)
+                {
+                    bestNode.x = freeRectangles[i].x;
+                    bestNode.y = freeRectangles[i].y;
+                    bestNode.width = height;
+                    bestNode.height = width;
+                    bestScore = Number.MIN_SAFE_INTEGER;
+                    nodeIndex = i;
+                    break;
+                }
+                // Does the rectangle fit upright?
+                else if (width <= this.freeRectangles[i].width && height <= this.freeRectangles[i].height)
+                {
+                    var score = ScoreByHeuristic(width, height, this.freeRectangles[i], rectChoice);
+
+                    if (score < bestScore)
+                    {
+                        bestNode.x = freeRectangles[i].x;
+                        bestNode.y = freeRectangles[i].y;
+                        bestNode.width = width;
+                        bestNode.height = height;
+                        bestScore = score;
+                        nodeIndex = i;
+                    }
+                }
+                // Does the rectangle fit sideways?
+                else if (height <= this.freeRectangles[i].width && width <= this.freeRectangles[i].height)
+                {
+                    var score = ScoreByHeuristic(height, width, this.freeRectangles[i], rectChoice);
+
+                    if (score < bestScore)
+                    {
+                        bestNode.x = freeRectangles[i].x;
+                        bestNode.y = freeRectangles[i].y;
+                        bestNode.width = height;
+                        bestNode.height = width;
+                        bestScore = score;
+                        nodeIndex = i;
+                    }
+                }
+            }
+            return {
+                'bestNode': bestNode,
+                'nodeIndex': nodeIndex
+            };
+        },
+        'Occupancy': function () {
+            var usedSurfaceArea = 0;
+            for (var i = 0; i < this.usedRectangles.length; ++i)
+                usedSurfaceArea += this.usedRectangles[i].width * this.usedRectangles[i].height;
+
+            return usedSurfaceArea / (this.width * this.height);
         }
-    };
+    }
 })(this);
