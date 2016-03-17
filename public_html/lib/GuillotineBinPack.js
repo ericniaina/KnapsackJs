@@ -283,8 +283,8 @@
                 // If this is a perfect fit sideways, choose it.
                 else if (height == this.freeRectangles[i].width && width == this.freeRectangles[i].height)
                 {
-                    bestNode.x = freeRectangles[i].x;
-                    bestNode.y = freeRectangles[i].y;
+                    bestNode.x = this.freeRectangles[i].x;
+                    bestNode.y = this.freeRectangles[i].y;
                     bestNode.width = height;
                     bestNode.height = width;
                     bestScore = Number.MIN_VALUE;
