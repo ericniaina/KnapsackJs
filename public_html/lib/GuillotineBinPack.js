@@ -18,7 +18,7 @@
         this.freeRectangles = [];
         this.freeRectangles.push(n);
     }
-    exports.GuillotineBinPack = GuillotineBinPack;
+
     GuillotineBinPack.prototype = {
         FreeRectChoiceHeuristic: {
             'RectBestAreaFit': function (width, height, freeRect) {
@@ -56,7 +56,7 @@
             while (rects.length > 0) {
                 var bestScore = Number.MAX_SAFE_INTEGER;
                 for (var i = 0; i < this.freeRectangles.length; ++i) {
-                    for (var j = 0; j < rects.length; ++i) {
+                    for (var j = 0; j < rects.length; ++j) {
                         // If this rectangle is a perfect match, we pick it instantly.
                         if (rects[j].width === this.freeRectangles[i].width && rects[j].height === this.freeRectangles[i].height)
                         {
@@ -115,7 +115,7 @@
                     newNode.height = temp;
                 }
                 // Remove the free space we lost in the bin.
-                SplitFreeRectByHeuristic(this.freeRectangles[bestFreeRect], newNode, splitMethod);
+                this.SplitFreeRectByHeuristic(this.freeRectangles[bestFreeRect], newNode, splitMethod);
                 this.freeRectangles.splice(bestFreeRect, 1);
                 // Remove the rectangle we just packed from the input list.
                 rects.splice(bestRect, 1);
@@ -123,7 +123,7 @@
                 if (merge)
                     MergeFreeList();
                 // Remember the new used rectangle.
-                this.usedRectanglesusedRectangles.push(newNode);
+                this.usedRectangles.push(newNode);
             }
         },
         SplitFreeRectByHeuristic: function (freeRect, placedRect, splitMethod) {
@@ -335,4 +335,6 @@
             return usedSurfaceArea / (this.width * this.height);
         }
     }
+
+    exports.GuillotineBinPack = GuillotineBinPack;
 })(this);

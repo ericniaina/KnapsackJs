@@ -32,16 +32,16 @@ describe('GuillotineBinPack', function () {
     });
     describe("Inserts", function () {
         it('Identical size should perfectly fit', function () {
-            var rects = [new Rect(200, 300, 0, 0)];
+            var rects = [new Rect(0, 0, 200, 300)];
             var bin = new GuillotineBinPack(200, 300);
             bin.Inserts(rects, false, 'RectBestAreaFit', 'SplitShorterLeftoverAxis');
             assert.equal(1, bin.Occupancy());
         });
         it('Divided by two should perfectly fit', function () {
-            var rects = [new Rect(200, 150, 0, 0), new Rect(200, 150, 0, 0)];
+            var rects = [new Rect(0, 0, 200, 150), new Rect(0, 0, 200, 150)];
             var bin = new GuillotineBinPack(200, 300);
-            bin.Insert(200, 150, false, 'RectBestAreaFit', 'SplitShorterLeftoverAxis');
-            assert.equal(0.5, bin.Occupancy());
+            bin.Inserts(rects, false, 'RectBestAreaFit', 'SplitShorterLeftoverAxis');
+            assert.equal(1, bin.Occupancy());
         });
     });
 });
