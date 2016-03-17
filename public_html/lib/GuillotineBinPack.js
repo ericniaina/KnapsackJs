@@ -54,7 +54,7 @@
             var bestRect = 0;
             var bestFlipped = false;
             while (rects.length > 0) {
-                var bestScore = Number.MAX_SAFE_INTEGER;
+                var bestScore = Number.MAX_VALUE;
                 for (var i = 0; i < this.freeRectangles.length; ++i) {
                     for (var j = 0; j < rects.length; ++j) {
                         // If this rectangle is a perfect match, we pick it instantly.
@@ -63,7 +63,7 @@
                             bestFreeRect = i;
                             bestRect = j;
                             bestFlipped = false;
-                            bestScore = Number.MIN_SAFE_INTEGER;
+                            bestScore = Number.MIN_VALUE;
                             i = this.freeRectangles.length; // Force a jump out of the outer loop as well - we got an instant fit.
                             break;
                         }
@@ -73,7 +73,7 @@
                             bestFreeRect = i;
                             bestRect = j;
                             bestFlipped = true;
-                            bestScore = Number.MIN_SAFE_INTEGER;
+                            bestScore = Number.MIN_VALUE;
                             i = this.freeRectangles.length; // Force a jump out of the outer loop as well - we got an instant fit.
                             break;
                         }
@@ -105,7 +105,7 @@
                 }
 
                 // If we didn't manage to find any rectangle to pack, abort.
-                if (bestScore === Number.MAX_SAFE_INTEGER)
+                if (bestScore === Number.MAX_VALUE)
                     return;
                 // Otherwise, we're good to go and do the actual packing.
                 var newNode = new Rect(this.freeRectangles[bestFreeRect].x, this.freeRectangles[bestFreeRect].y, rects[bestRect].width, rects[bestRect].height);
@@ -265,7 +265,7 @@
         },
         FindPositionForNewNode: function (width, height, rectChoice, nodeIndex) {
             var bestNode = new Rect(0, 0, 0, 0);
-            var bestScore = Number.MAX_SAFE_INTEGER;
+            var bestScore = Number.MAX_VALUE;
             /// Try each free rectangle to find the best one for placement.
             for (var i = 0; i < this.freeRectangles.length; ++i)
             {
@@ -276,7 +276,7 @@
                     bestNode.y = this.freeRectangles[i].y;
                     bestNode.width = width;
                     bestNode.height = height;
-                    bestScore = Number.MIN_SAFE_INTEGER;
+                    bestScore = Number.MIN_VALUE;
                     nodeIndex = i;
                     break;
                 }
@@ -287,7 +287,7 @@
                     bestNode.y = freeRectangles[i].y;
                     bestNode.width = height;
                     bestNode.height = width;
-                    bestScore = Number.MIN_SAFE_INTEGER;
+                    bestScore = Number.MIN_VALUE;
                     nodeIndex = i;
                     break;
                 }
