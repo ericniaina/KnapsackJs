@@ -70,6 +70,7 @@ var GuillotineBinPack = require("./GuillotineBinPack.js").GuillotineBinPack;
                 while (current_type_cut.length > 0) {
                     var bin = this.flatten_usableBins[type].pop();
                     var guillotine = new GuillotineBinPack(bin.width, bin.height);
+                    guillotine.bin = bin;
                     guillotine.Inserts(current_type_cut, false, 'RectBestAreaFit', 'SplitShorterLeftoverAxis');
                     var by_type = (typeof this.usedBins[type]!= 'undefined' && this.usedBins[type] instanceof Array) ? this.usedBins[type] : [];
                     by_type.push(guillotine);
