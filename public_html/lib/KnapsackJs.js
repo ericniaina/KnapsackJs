@@ -11,16 +11,23 @@
      * @param Array cuts An Array containing all cuts that need to be done.
      * Each element of the Array should have the following format:
      * {
-     *   cut_width: 200, 
-     *   cut_height: 300,
-     *   cut_number: 20,
-     *   bin_type: "bin_2" // idendifier for the bin type
+     *   width: 200, 
+     *   height: 300,
+     *   number: 20,
+     *   type: "bin_2" // idendifier for the bin type
      * }
      * @param Array bins An Array  containing all bins that can be used
      * Each element of the Array should have the following format:
+     * Each element of the Array should have the following format:
+     * {
+     *   width: 200, 
+     *   height: 300,
+     *   number: 20,
+     *   type: "bin_2" // idendifier for the bin type
+     * }
      * @returns {KnapsackJs_L7.KnapsackJs}
      */
-    function KnapsackJs(usableBins,cuts) {
+    function KnapsackJs(cuts, usableBins) {
         this.usableBins = usableBins;
         this.cuts = cuts;
         this.bins = [];
@@ -30,13 +37,30 @@
     KnapsackJs.prototype = {
         /**
          * this phase is used to flatten the cuts
-         * and separate cut lists by 
+         * and separate cut lists by type
          * @returns {undefined}
          */
         init: function () {
-            for (var i = 0; i < this.cuts.length; ++i) {
-                
+            this.flatten_cuts = this.flatten(this.cuts);
+            this.flatten_usableBins = this.flatten(this.usableBins);
+        },
+        flatten: function (bins) {
+            var flattened = {};
+            for (var i = 0; i < bins.length; ++i) {
+                var current = bins[i];
+                do {
+                    var by_type = (typeof flattened[current.type] != 'undefined' && flattened[current.type] instanceof Array) ? flattened[current.type] : [];
+                    by_type.push({
+                        width: current.width,
+                        height: current.height,
+                        number: 1,
+                        type: current.type
+                    });
+                    current.number = current.number - 1;
+                    flattened[current.type] = by_type;
+                } while (current.number > 0);
             }
+            return flattened;
         }
     };
 })(this);
