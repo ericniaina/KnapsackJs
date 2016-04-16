@@ -53,5 +53,41 @@ describe('KnapsackJs', function () {
             assert.equal(10, knapsack.flatten_usableBins.type_2.length);
             assert.equal(20, knapsack.flatten_usableBins.type_1.length);
         });
+
+        it('should identify the cut list', function () {
+            var cuts = [];
+            cuts.push({
+                width: 400,
+                height: 300,
+                number: 4,
+                type: "type_2" // idendifier for the bin type
+            });
+            cuts.push({
+                width: 400,
+                height: 500,
+                number: 5,
+                type: "type_1" // idendifier for the bin type
+            });
+            var bins = [];
+            bins.push({
+                width: 1200,
+                height: 1300,
+                number: 10,
+                type: "type_2" // idendifier for the bin type
+            });
+            bins.push({
+                width: 1500,
+                height: 1250,
+                number: 20,
+                type: "type_1" // idendifier for the bin type
+            });
+            var knapsack = new KnapsackJs(cuts, bins);
+            knapsack.init();
+            knapsack.do_cuts();
+            assert.equal(0, knapsack.flatten_cuts.type_1.length);
+            assert.equal(0, knapsack.flatten_cuts.type_2.length);
+            assert.equal(knapsack.usedBins.type_1[0].usedRectangles.length, 5);
+            assert.equal(knapsack.usedBins.type_2[0].usedRectangles.length, 4);
+        });
     });
 });

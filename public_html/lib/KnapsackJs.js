@@ -2,6 +2,8 @@
  * This library is using the GuillotineBinPack algorithme
  * To fit all the defined cuts in the necessary amout of bin
  */
+
+var GuillotineBinPack = require("./GuillotineBinPack.js").GuillotineBinPack;
 // KnapsackJs.js
 (function (exports) {
     "use strict";
@@ -30,7 +32,7 @@
     function KnapsackJs(cuts, usableBins) {
         this.usableBins = usableBins;
         this.cuts = cuts;
-        this.bins = [];
+        this.usedBins = {};
     }
     exports.KnapsackJs = KnapsackJs;
 
@@ -61,6 +63,18 @@
                 } while (current.number > 0);
             }
             return flattened;
-        }
-    };
+        },
+        do_cuts: function () {
+            for (var type in  this.flatten_cuts) {
+                var current_type_cut = this.flatten_cuts[type];
+                while (current_type_cut.length > 0) {
+                    var bin = this.flatten_usableBins[type].pop();
+                    var guillotine = new GuillotineBinPack(bin.width, bin.height);
+                    guillotine.Inserts(current_type_cut, false, 'RectBestAreaFit', 'SplitShorterLeftoverAxis');
+                    var by_type = (typeof this.usedBins[type]!= 'undefined' && this.usedBins[type] instanceof Array) ? this.usedBins[type] : [];
+                    by_type.push(guillotine);
+                    this.usedBins[type] = by_type;
+                }
+            }
+        }};
 })(this);
